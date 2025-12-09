@@ -12,8 +12,9 @@ pedalboard>=0.8.0
 librosa>=0.10.0
 numpy>=1.24.0
 
-# AI 모델 (버전 유연하게 설정)
+# AI 모델
 torch>=2.2.0
 transformers>=4.36.0
 peft>=0.7.0
 huggingface_hub>=0.20.0
+accelerate>=0.25.0
