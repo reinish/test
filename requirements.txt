@@ -1,9 +1,21 @@
-# MagicPath AI Vocal Effects Server
+# MagicPath Server - DiffVox LLM 통합 버전
+# ==========================================
 
-fastapi>=0.100.0
-uvicorn>=0.23.0
-python-multipart>=0.0.6
-pedalboard>=0.8.0
-soundfile>=0.12.0
-numpy>=1.24.0
-pydantic>=2.0.0
+# 웹 서버
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+
+# 오디오 처리
+soundfile==0.12.1
+pedalboard==0.8.9
+librosa==0.10.1
+numpy==1.26.2
+
+# AI 모델 (GPU 서버에서만 설치)
+torch==2.1.2
+transformers==4.36.2
+peft==0.7.1
+
+# CLAP 오디오 인코더
+# laion-clap==1.1.4  # 선택사항: CLAP 모델 직접 사용 시
