@@ -221,15 +221,17 @@ class AIEffector:
         self, 
         model_path: Optional[str] = None,
         base_model_name: str = "Qwen/Qwen3-8B",
-        audio_feature_dim: int = 64
+        audio_feature_dim: int = 64,
+        use_huggingface: bool = True
     ):
         """
         AI 모델 초기화
         
         Args:
-            model_path: 학습된 LoRA 모델 경로
+            model_path: 학습된 LoRA 모델 경로 (로컬 또는 Hugging Face 레포)
             base_model_name: 베이스 LLM 모델 이름
             audio_feature_dim: 오디오 특징 차원 (CLAP 출력)
+            use_huggingface: True면 model_path를 Hugging Face 레포로 간주
         """
         self.model = None
         self.tokenizer = None
@@ -239,22 +241,29 @@ class AIEffector:
         
         self.base_model_name = base_model_name
         self.audio_feature_dim = audio_feature_dim
+        self.use_huggingface = use_huggingface
         
         if model_path:
             self._load_model(model_path)
     
     def _load_model(self, model_path: str):
-        """학습된 LoRA 모델 로드"""
+        """학습된 LoRA 모델 로드 (로컬 또는 Hugging Face)"""
         if not TRANSFORMERS_AVAILABLE:
             print("[AIEffector] transformers/peft 미설치")
             return
         
-        if not os.path.exists(model_path):
-            print(f"[AIEffector] 모델 경로 없음: {model_path}")
+        # 로컬 경로인지 Hugging Face 레포인지 확인
+        is_local = os.path.exists(model_path)
+        
+        if not is_local and not self.use_huggingface:
+            print(f"[AIEffector] 로컬 모델 경로 없음: {model_path}")
             return
         
         try:
-            print(f"[AIEffector] 모델 로딩 중: {model_path}")
+            if self.use_huggingface and not is_local:
+                print(f"[AIEffector] Hugging Face에서 모델 로딩: {model_path}")
+            else:
+                print(f"[AIEffector] 로컬 모델 로딩: {model_path}")
             
             # 토크나이저 로드
             self.tokenizer = AutoTokenizer.from_pretrained(
@@ -272,10 +281,10 @@ class AIEffector:
                 trust_remote_code=True,
             )
             
-            # LoRA 어댑터 적용
+            # LoRA 어댑터 적용 (Hugging Face 레포 또는 로컬 경로)
             self.model = PeftModel.from_pretrained(
                 base_model,
-                model_path,
+                model_path,  # Hugging Face 레포 이름 또는 로컬 경로
                 is_trainable=False
             )
             self.model.eval()

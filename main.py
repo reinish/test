@@ -21,10 +21,11 @@ from audio_processing.effect_chain import EffectChain
 # 설정
 # ============================================
 
-# 학습된 모델 경로 (환경변수 또는 기본값)
-MODEL_PATH = os.environ.get("DIFFVOX_MODEL_PATH", "./checkpoints/diffvox_model")
+# 학습된 모델 경로 (Hugging Face 레포 또는 로컬 경로)
+MODEL_PATH = os.environ.get("DIFFVOX_MODEL_PATH", "heybaeheef/KU_SW_Academy")
 BASE_MODEL_NAME = os.environ.get("BASE_MODEL_NAME", "Qwen/Qwen3-8B")
 AUDIO_FEATURE_DIM = int(os.environ.get("AUDIO_FEATURE_DIM", "64"))
+USE_HUGGINGFACE = os.environ.get("USE_HUGGINGFACE", "true").lower() == "true"
 
 # ============================================
 # FastAPI 앱 초기화
@@ -52,12 +53,14 @@ print("=" * 60)
 print(f"Model Path: {MODEL_PATH}")
 print(f"Base Model: {BASE_MODEL_NAME}")
 print(f"Audio Feature Dim: {AUDIO_FEATURE_DIM}")
+print(f"Use Hugging Face: {USE_HUGGINGFACE}")
 print("=" * 60)
 
 ai_effector = AIEffector(
-    model_path=MODEL_PATH if os.path.exists(MODEL_PATH) else None,
+    model_path=MODEL_PATH,
     base_model_name=BASE_MODEL_NAME,
-    audio_feature_dim=AUDIO_FEATURE_DIM
+    audio_feature_dim=AUDIO_FEATURE_DIM,
+    use_huggingface=USE_HUGGINGFACE
 )
 effect_chain = EffectChain()
 
